@@ -1,7 +1,7 @@
 leikou
 =====
 
-An OTP application
+每日力扣
 
 Build
 -----
