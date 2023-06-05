@@ -30,7 +30,6 @@ loop2([W, W | Next], StartI, NowI, Big) ->
 loop2([W, W2 | Next], StartI, NowI, Big) ->
     Count = get(W),
     Count1 = NowI - StartI + 1,
-    io:format("W,~p W2 ~p,  Next ~p  StartI ~p , NowI ~p , Big ~p ~n", [W, W2, Next, StartI, NowI, Big]),
     if ((Count1 == Count) or (Count == Count1+1)) ->
         NewBig = big_one(Count, Big);
         true ->
@@ -40,7 +39,6 @@ loop2([W, W2 | Next], StartI, NowI, Big) ->
                 if NextW == W ->
                     io:format("hhh~n"),
                     C = next_loop(Next, 0),
-                    io:format("C ~p Count~p  Count1 ~p ~n", [C, Count, Count1]),
                     if Count1 + C < Count ->
                         Count2 = Count1 + C + 1;
                         true ->
@@ -60,7 +58,6 @@ loop2([W, W2 | Next], StartI, NowI, Big) ->
 loop2([W2], StartI, NowI, Big) ->
     Count1 = NowI - StartI + 1 ,
     Count = get(W2),
-    io:format("W2 ~p,  StartI ~p , NowI ~p , Big ~p ~n", [W2, StartI, NowI, Big]),
     if  Count > Count1 ->
         NCount = Count1 + 1;
         true ->
