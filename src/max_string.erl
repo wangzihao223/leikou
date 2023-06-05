@@ -37,7 +37,6 @@ loop2([W, W2 | Next], StartI, NowI, Big) ->
 
                 [NextW| _Next1] = Next,
                 if NextW == W ->
-                    io:format("hhh~n"),
                     C = next_loop(Next, 0),
                     if Count1 + C < Count ->
                         Count2 = Count1 + C + 1;
