@@ -1,7 +1,7 @@
 -module(mice_and_cheese).
 -export([main/3]).
 
-
+% 老鼠和奶酪
 main(Reward1, Reward2, K)->
     {ExpectK1, DValueTuple, Bigest} = best_plan(0, Reward1, Reward2, {[],[]}, 0),
     better_plan(K, ExpectK1, DValueTuple, Bigest).
