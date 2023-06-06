@@ -1,6 +1,7 @@
 -module(equal_paris).
 -export([test/0]).
 
+%相等行列对
 main(Grid) ->
     Map = loop(Grid, #{}),
     % io:format("Map ~p ~n", [Map]),
