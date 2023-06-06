@@ -1,6 +1,8 @@
 -module(merge_alternately).
 -export([main/2]).
 
+% 交替合并字符串
+% W1  unicode binary W2 unicode binary
 main(W1, W2) ->
     W3 = binary:bin_to_list(W1),
     W4 = binary:bin_to_list(W2),
