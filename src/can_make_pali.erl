@@ -1,6 +1,8 @@
 -module(can_make_pali).
 -export([main/2]).
 
+%构建回文串检测
+
 init_letter_array(0, Array) -> Array;
 init_letter_array(N, Array) ->
     init_letter_array(N-1, Array#{N-1 => 0}).
