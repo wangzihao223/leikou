@@ -1,4 +1,5 @@
 -module(employ).
+
 -export([main/6]).
 
 % %一财主有一个金矿，在D天后该金矿会被收归国有。
@@ -9,17 +10,17 @@
 main(0, _, _, _, _, Res) ->
     lists:reverse(Res);
 main(D, P, G, K, M, Res) ->
-    if D * G  - K > 0 ->
-        % 买完长工剩下的钱
-        M1 = M rem K,
-        % 买 newP 
-        NewP = M div K,
-        P1 = NewP + P,
-        M2 = M1 + P1 * G,
-        main(D-1, P1, G, K, M2, [NewP|Res]);
-    true ->
-        M2 = M + P * G,
-        main(D-1, P, G, K, M2, [0|Res])
+    if D * G - K > 0 ->
+           % 买完长工剩下的钱
+           M1 = M rem K,
+           % 买 newP
+           NewP = M div K,
+           P1 = NewP + P,
+           M2 = M1 + P1 * G,
+           main(D - 1, P1, G, K, M2, [NewP | Res]);
+       true ->
+           M2 = M + P * G,
+           main(D - 1, P, G, K, M2, [0 | Res])
     end.
 
 % loop(D) ->
