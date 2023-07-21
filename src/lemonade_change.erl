@@ -18,8 +18,6 @@
 lemonade_change(Bills) ->
   sim_process(Bills, #{5=>0, 10=>0}).
 
-
-
 sim_process([B | NextBill], MoneyBox) ->
   case B of
     5 ->
