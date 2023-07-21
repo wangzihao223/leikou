@@ -16,33 +16,28 @@
 
 -spec lemonade_change(Bills :: [integer()]) -> boolean().
 lemonade_change(Bills) ->
-  sim_process(Bills, #{5=>0, 10=>0}).
+  sim_process(Bills, 0, 0).
 
-sim_process([B | NextBill], MoneyBox) ->
+sim_process([B | NextBill], Five, Ten) ->
   case B of
     5 ->
-      V =  map_get(B, MoneyBox),
-      NewMoneyBox = MoneyBox#{5:= V + 1},
-      sim_process(NextBill, NewMoneyBox);
+      sim_process(NextBill, Five + 1, Ten);
     10 ->
-      V1 = map_get(5, MoneyBox),
-      V2 = map_get(10, MoneyBox),
-      if V1 == 0 ->
+      if Five == 0 ->
           false;
         true ->
-          NewMoneyBox = MoneyBox#{5:= V1 - 1, 10:= V2 + 1},
-          sim_process(NextBill, NewMoneyBox)
+          sim_process(NextBill, Five - 1, Ten + 1)
       end;
     20 ->
-      V1 = map_get(5, MoneyBox),
-      V2 = map_get(10, MoneyBox),
-      if V2 =/= 0 , V1 =/= 0 ->
-          sim_process(NextBill, MoneyBox#{5:= V1 - 1, 10:= V2 - 1});
-        V1 > 2 ->
-          sim_process(NextBill, MoneyBox#{5:= V1 - 3, 10:= V2});
+      % V1 = map_get(5, MoneyBox),
+      % V2 = map_get(10, MoneyBox),
+      if Ten =/= 0 , Five =/= 0 ->
+          sim_process(NextBill, Five - 1, Ten - 1);
+        Five > 2 ->
+          sim_process(NextBill, Five - 3, Ten);
         true ->
           false
       end
   end;
-sim_process([], _MoneyBox) -> true.
+sim_process([], _, _) -> true.
 
