@@ -31,7 +31,7 @@ move_k(_, Res, L, _LastK) when L == 2 ->
 move_k([K | NextK], Res, Length, LastK) when LastK == K->
   move_k(NextK, Res, Length - 1, LastK);
 move_k([K | NextK], Res, Length, _LastK) ->
-  NewRes = double_point(NextK, lists:reverse(NextK), 0, Length-2, Res, K),
+  NewRes = double_point(NextK, lists:reverse(NextK), 0, Length - 2, Res, K),
   move_k(NextK, NewRes, Length - 1, K).
 
 double_point([I | NextI], [J | NextJ], IndexI, IndexJ, Res, K) when IndexI < IndexJ ->
