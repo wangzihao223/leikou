@@ -29,8 +29,6 @@ sim_process([B | NextBill], Five, Ten) ->
           sim_process(NextBill, Five - 1, Ten + 1)
       end;
     20 ->
-      % V1 = map_get(5, MoneyBox),
-      % V2 = map_get(10, MoneyBox),
       if Ten =/= 0 , Five =/= 0 ->
           sim_process(NextBill, Five - 1, Ten - 1);
         Five > 2 ->
