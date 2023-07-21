@@ -52,7 +52,6 @@ double_point([I | NextI], [J | NextJ], IndexI, IndexJ, Res, K) when IndexI < Ind
 double_point(_, _, _IndexI, _IndexJ, Res, _) ->
   Res.
 
-
 jump_repeat([J | NextJ], J, Count) ->
   jump_repeat(NextJ, J, Count + 1);
 jump_repeat(R, _, Count) -> {R, Count}.
