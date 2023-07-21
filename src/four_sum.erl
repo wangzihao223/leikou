@@ -27,18 +27,7 @@
 %%著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 four_sum(Nums, Target) ->
   NewNums = lists:sort(Nums),
-%%  RNewNums = lists:reverse(NewNums),
-  io:format("L ~p ~n", [NewNums]),
   move_k(NewNums, [], length(NewNums), null, Target).
-
-
-%%move_kz(_, Res, L, _LastK) when L < 4 ->
-%%  Res;
-%%move_kz([_, Z | NextK], Res, Length, LastK) when LastK == Z->
-%%  move_kz([Z | NextK], Res, Length - 1, LastK);
-%%move_kz([K, Z | NextK], Res, Length, _LastK) ->
-%%  NewRes = double_point(NextK, lists:reverse(NextK), 0, Length-2, Res, K, Z),
-%%  move_kz([Z |NextK], NewRes, Length - 1, K).
 
 move_k(_, Res, L, _LastK, _) when L < 4 ->
   Res;
@@ -46,7 +35,6 @@ move_k([K | NextK], Res, Length, LastK, T) when LastK == K->
   move_k(NextK, Res, Length - 1, LastK, T);
 move_k([K | NextK], Res, Length, _LastK, T) ->
   NewRes = move_z(NextK, Res, Length - 1, null, K, T),
-%%  NewRes = double_point(NextK, lists:reverse(NextK), 0, Length - 2, Res, K),
   move_k(NextK, NewRes, Length - 1, K, T).
 
 
@@ -68,10 +56,8 @@ double_point([I | NextI], [J | NextJ], IndexI, IndexJ, Res, K, Z, T) when IndexI
       double_point([I | NextI], NewJ, IndexI, IndexJ - 1 - Jc, Res, K, Z, T);
     true ->
       NewRes = [[K, Z, I, J] | Res],
-      io:format("res ~p ~n", [[K, I , J]]),
       {NewI, Ic} = jump_repeat(NextI, I, 0),
       {NewJ, Jc} = jump_repeat(NextJ, J, 0),
-      io:format("NewI ~p, NewJ ~p ~n", [NewI, NewJ]),
       double_point(NewI, NewJ, IndexI + 1 + Ic, IndexJ - 1 - Jc, NewRes, K, Z, T)
   end;
 double_point(_, _, _IndexI, _IndexJ, Res, _, _, _) ->
