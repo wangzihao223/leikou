@@ -13,7 +13,7 @@
 -export([num_jewels_in_stones/2]).
 
 num_jewels_in_stones(Jewels, Stones) ->
-  Set = sets:from_list(unicode:characters_to_list(Stones)),
+  Set = sets:from_list(unicode:characters_to_list(Jewels)),
   check_stones(Stones, Set, 0).
 
 check_stones([], _, Counter) -> Counter;
