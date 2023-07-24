@@ -42,6 +42,10 @@
 % 直行
 % direction  pos command  (-1 -2 1-9)
 
+robot_sim(Commands, Obstacles) ->
+  ObstaclesSet = sets:from_list(Obstacles),
+  state({[0, 1], [0, 0]}, Commands, init(), ObstaclesSet, 0).
+
 init() ->
   #{
     {[1, 0], -1} => [0, -1],
@@ -54,8 +58,7 @@ init() ->
     {[0, 1], -2} => [-1, 0]
   }.
 
-state(_, [], _, _, Max) ->
-  Max;
+state(_, [], _, _, Max) -> Max;
 state({Direction, Pos}, [Command | NextCommands], Map, Obstacles, Max) ->
   if Command < 0 ->
       NextDirection = map_get({Direction, Command}, Map),
@@ -63,31 +66,21 @@ state({Direction, Pos}, [Command | NextCommands], Map, Obstacles, Max) ->
     true ->
         NewPos = move(Direction, Pos, Obstacles, Command),
         NewMax = get_max_point(NewPos, Max),
-        io:format("Max ~p ~n", [NewMax]),
         state({Direction, NewPos}, NextCommands, Map, Obstacles, NewMax)
   end.
-%%
+
 get_max_point([X, Y], Max)  ->
   V = X * X + Y * Y,
   if V > Max -> V;
-    true ->
-      Max
+    true -> Max
   end.
 
-move(_, Pos, _, 0) ->
-  Pos;
+move(_, Pos, _, 0) -> Pos;
 move([X, Y], [X1, Y1], Obstacles, V) ->
   NewPos = [X + X1, Y + Y1],
-  io:format("位置 Pos ~p ", [NewPos]),
   case sets:is_element(NewPos, Obstacles) of
-    true ->
-      [X1, Y1];
+    true -> [X1, Y1];
     false ->
       move([X, Y], NewPos, Obstacles, V - 1)
   end.
-
-
-robot_sim(Commands, Obstacles) ->
-  ObstaclesSet = sets:from_list(Obstacles),
-  state({[0, 1], [0, 0]}, Commands, init(), ObstaclesSet, 0).
 
