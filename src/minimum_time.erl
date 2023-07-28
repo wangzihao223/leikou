@@ -15,46 +15,22 @@
 minimum_time(N, Relations, Time) ->
   TimeMap = time_map(Time, 1, #{}),
   {OutMap, InMap} = make_graph(Relations, #{}, #{}),
+  io:format("Inmap ~p ~n", [InMap]),
   Zero = in_degree_zero(InMap, 1, N, []),
   Q = queue:from_list(Zero),
 
-  MinMap = loop(#{}, TimeMap, OutMap, InMap, Q, sets:from_list(Zero), N, sets:from_list(range(1, N, []))),
+  MinMap = loop(#{}, TimeMap, OutMap, InMap, Q),
   find_max(MinMap, 2, N, map_get(1, MinMap)).
 
-range(L, R, Res) when R >= L->
-  range(L+1, R, [L | Res]);
-range(_L, _R, Res) -> Res.
-
-f(_, [], Res)-> Res;
-f(InMap, [C | Next],Res) ->
-  case maps:is_key(C, InMap) of
-    false -> f(InMap, Next, [C | Res]);
-    true -> f(InMap, Next, Res)
-  end.
-
-
-
-loop(MinTimeMap, TimeMap, OutMap, InMap, Q, F, N, Sets) ->
-
+loop(MinTimeMap, TimeMap, OutMap, InMap, Q) ->
   case queue:is_empty(Q) of
     true ->
       MinTimeMap;
     false ->
       {{value, Item}, Q2} = queue:out(Q),
-      {MinTime1, InMap1} = learn_in_degree_zero(Item, MinTimeMap, TimeMap, OutMap, InMap),
-      S1 = sets:subtract(Sets, F),
-      Z = f(InMap1, sets:to_list(S1), []),
-      Z1_S = sets:subtract(sets:from_list(Z), F),
-      Z1 = sets:to_list(Z1_S),
-      Q3 = loop_in_queue(Z1, Q2),
-      loop(MinTime1, TimeMap, OutMap, InMap1, Q3, sets:union(Z1_S, F), N, Sets)
+      {MinTimeMap1, InMap1, Q1} = learn_in_degree_zero(Item, MinTimeMap, TimeMap, OutMap, InMap, Q2),
+      loop(MinTimeMap1, TimeMap, OutMap, InMap1, Q1)
   end.
-
-
-
-loop_in_queue([], Q) -> Q;
-loop_in_queue([L | NextL], Q)->
-  loop_in_queue(NextL, queue:in(L, Q)).
 
 % graph
 make_graph([[P, N] | NextR], OutMap, InMap) ->
@@ -74,20 +50,20 @@ time_map([T | NextT], C, Map) ->
   time_map(NextT, C + 1, Map#{C=>T});
 time_map([], _, Map) -> Map.
 
-learn_in_degree_zero(C, MinTimeMap, TimeMap, OutMap, InMap) ->
+learn_in_degree_zero(C, MinTimeMap, TimeMap, OutMap, InMap, Q) ->
   NewMinMap = MinTimeMap#{C => map_get(C, TimeMap) + maps:get(C, MinTimeMap, 0)},
-  {InMap1, MinTimeMap1} = del_node_from_out_degree(C, OutMap, InMap, NewMinMap),
-  {MinTimeMap1, InMap1}.
+  {InMap1, MinTimeMap1, Q1} = del_node_from_out_degree(C, OutMap, InMap, NewMinMap, Q),
+  {MinTimeMap1, InMap1, Q1}.
 
-del_node_from_out_degree(Node, OutMap, InMap, MinTimeMap) ->
+del_node_from_out_degree(Node, OutMap, InMap, MinTimeMap, Q) ->
   case maps:get(Node, OutMap, null) of
-    null -> {InMap, MinTimeMap};
+    null -> {InMap, MinTimeMap, Q};
     V ->
-      {InMap1, MinTimeMap1} = loop_del(sets:to_list(V), InMap, Node, MinTimeMap),
-      {InMap1, MinTimeMap1}
+      {InMap1, MinTimeMap1, Q1} = loop_del(sets:to_list(V), InMap, Node, MinTimeMap, Q),
+      {InMap1, MinTimeMap1, Q1}
   end.
 
-loop_del([C | NextC], InMap, Node, MinTimeMap) ->
+loop_del([C | NextC], InMap, Node, MinTimeMap, Q) ->
   case maps:get(C, InMap, null) of
     null -> {InMap, MinTimeMap};
     V ->
@@ -98,13 +74,15 @@ loop_del([C | NextC], InMap, Node, MinTimeMap) ->
       S = sets:del_element(Node, V),
       case sets:is_empty(S) of
         true ->
-          InMap1 = maps:remove(C, InMap);
+          Q2 = queue:in(C, Q),
+          InMap1 = maps:remove(C, InMap),
+          loop_del(NextC, InMap1, Node, MTM, Q2);
         _ ->
-          InMap1 = InMap#{C := S}
-      end,
-      loop_del(NextC, InMap1, Node, MTM)
+          InMap1 = InMap#{C := S},
+          loop_del(NextC, InMap1, Node, MTM, Q)
+      end
   end;
-loop_del([], InMap, _, MinTimeMap) -> {InMap, MinTimeMap}.
+loop_del([], InMap, _, MinTimeMap, Q) -> {InMap, MinTimeMap, Q}.
 
 find_max(MinMap, C, N, Max) when C =< N  ->
   find_max(MinMap, C + 1, N, max(Max, map_get(C, MinMap)));
