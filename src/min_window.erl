@@ -11,7 +11,7 @@
 
 %% API
 %% 最小覆盖子串
--export([]).
+-export([min_window/2]).
 
 -spec min_window(S :: unicode:unicode_binary(), T :: unicode:unicode_binary()) -> unicode:unicode_binary().
 min_window(S, T) ->
@@ -22,33 +22,52 @@ make_map(<<L:8, NextL/binary>>, Map) ->
   make_map(NextL, Map#{L => maps:get(L, Map, 0) + 1});
 make_map(<<>>, Map) -> Map.
 
-move_window(Window, WinMap, Map, <<L:8, NextL/binary>>) ->
+move_window(<<>>, WinMap, Map, <<L:8, NextL/binary>>, MinLength) ->
   case maps:is_key(L, Map) of
-    false -> move_window(<<>>, #{}, Map, NextL);
+    false -> move_window(<<>>, #{}, Map, NextL, MinLength);
     true ->
-      if Window =/= <<>> ->
-          <<Head:8, _/binary>> = Window,
-          if Head == L ->
-              Win1 = clear_window(Window, Map),
-              Win2 = <<Win1/binary, L:8>>,
-              check_and_move(Map, WinMap, Win2, NextL);
-            true ->
-              WinMap1 = WinMap#{L => maps:get(L, WinMap, 0) + 1},
-              check_and_move(Map, WinMap1, <<Window/binary, L:8>>, NextL)
-          end;
+      check_and_move(Map, #{L => 1}, <<L:8>>, MinLength, Next)
+  end;
+move_window(Window, WinMap, Map, <<L:8, NextL/binary>>, MinLength) ->
+  case maps:is_key(L, Map) of
+    false -> move_window(<<Window/binary, L:8>>, WinMap, Map, NextL, MinLength);
+    true ->
+      case check_letter_num(Map, WinMap, L) of
         true ->
-          WinMap1 = WinMap#{L => maps:get(L, WinMap, 0) + 1},
-          check_and_move(Map, WinMap1, <<L:8>>, NextL)
+          % 检查是否hege
+          move_window(<<Window/binary, L:8>>, WinMap#{L => maps:get(L, WinMap) + 1}, Map, NextL, MinLength);
+        false ->
+          {Win1, Count} = resize_window(L, Window, 0),
+          
       end
-  end;
-move_window(Window, _, _, <<>>) -> Window.
 
-clear_window(<<H:8, Next/binary>>, Map) ->
-  case maps:is_key(H, Map) of
-    false -> clear_window(Next, Map);
-    true -> <<H:8, Next/binary>>
+      check_and_move(Map, #{L => 1}, <<L:8>>, MinLength, Next)
   end;
-clear_window(<<>>, _) -> <<>>.
+% move_window(Window, _, _, <<>>) -> Window.
+
+check_letter_num(Map, WinMap, L) ->
+  #{L := C} = Map,
+  case maps:is_key(L, WinMap) of
+    true ->
+      C1 = map_get(L, WinMap),
+      if C1 < C -> true;
+        true -> false
+      end;
+    false -> true
+  end.
+
+resize_window(Letter, <<L:8, Next/binary>>, Count) when Letter =/= L->
+  resize_window(Letter, Next, Count + 1);
+resize_window(Letter, <<L:8, Next/binary>>, Count) -> {Next, Count + 1};
+resize_window(Letter, <<>>, Count) -> {<<>>, Count}.
+
+
+% clear_window(<<H:8, Next/binary>>, Map, Count) ->
+%   case maps:is_key(H, Map) of
+%     false -> clear_window(Next, Map, Count + 1);
+%     true -> {<<H:8, Next/binary>>, Count}
+%   end;
+% clear_window(<<>>, _, Count) -> {<<>>, Count}.
 
 equal(Map, WinMap) ->
   case maps:next(Map) of
@@ -64,9 +83,21 @@ equal(Map, WinMap) ->
       end
   end.
 
-check_and_move(Map, WinMap, Win, NextL) ->
-  case equal(maps:iterator(Map), WinMap)of
-    true -> Win;
-    false ->
-      move_window(Win, WinMap, Map, NextL)
+check_and_move(Map, WinMap, Window, MinLength, Next) ->
+  case equal(maps:iterator(Map), WinMap) of
+    true -> 
+      if MinLength == none ->Min1 = byte_size(Window);
+        true-> Min1 = min(byte_size(Window), MinLength)
+      end,
+      move_window(Window, WinMap, Map, Next, Min1);
+    false ->  move_window(Window, WinMap, Map, Next, MinLength)
   end.
+
+% check_and_move(Map, WinMap, Win, NextL, Length, MinLength) ->
+%   case equal(maps:iterator(Map), WinMap)of
+%     true -> 
+%       min(Length, MinLength),
+%       move_window(Win, WinMap, Map, NextL, Length, min(Length, MinLength));
+%     false ->
+%       move_window(Win, WinMap, Map, NextL, Length, MinLength)
+%   end.
