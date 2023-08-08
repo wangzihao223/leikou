@@ -8,28 +8,23 @@
 %%%-------------------------------------------------------------------
 -module(max_absolute_sum).
 -author("16009").
+% 任意子数组和的绝对值的最大值
 
 %% API
 -export([max_absolute_sum/1]).
 -spec max_absolute_sum(Nums :: [integer()]) -> integer().
 max_absolute_sum(Nums) ->
-  max(-1 * signed(Nums, 0, 0), unsigned(Nums, 0, 0)).
+  max_value(Nums, 0, 0, 0, 0).
 
+max_value([N | Next], UnsignedSum, UnsignedMax, SignedSum, SignedMax) ->
+  UnsignedSum1 = UnsignedSum + N,
+  UnsignedMax1 = max(UnsignedSum1, UnsignedMax),
 
-unsigned([N | Next], Sum, Max) when N >= 0 ->
-  unsigned(Next, Sum + N, max(Sum + N, Max));
-unsigned([N | Next], Sum, Max) ->
-  if N + Sum > 0 -> unsigned(Next, Sum + N, max(Sum + N, Max));
-    true -> unsigned(Next, 0, Max)
-  end;
-unsigned([], Sum, Max) -> max(Sum, Max).
+  SignedSum1 = SignedSum + N,
+  SignedMax1 = min(SignedSum1, SignedMax),
 
-signed([N | Next], Sum, Max) when N =< 0 ->
-  signed(Next, Sum + N, min(Sum + N, Max));
-signed([N | Next], Sum, Max) ->
-  if N + Sum < 0 -> signed(Next, Sum + N, min(Sum + N, Max));
-    true -> signed(Next, 0, Max)
-  end;
-signed([], Sum, Max) -> min(Sum, Max).
+  max_value(Next, max(UnsignedSum1, 0), UnsignedMax1, min(SignedSum1, 0), SignedMax1);
+max_value([], _, UnSignedMax, _, SignedMax) -> max(-1 * SignedMax, UnSignedMax).
+
 
 
