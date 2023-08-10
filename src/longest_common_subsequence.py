@@ -21,5 +21,6 @@ def func_f(index_a, index_b, table, nums_a, nums_b):
         value = max(table[index_a - 1][index_b], table[index_a][index_b - 1])
         table[index_a][index_b] = value
 
+
 if __name__ == '__main__':
     longest_common_subsequence("pmjghexybyrgzczy", "hafcdqbgncrcbihkd")
