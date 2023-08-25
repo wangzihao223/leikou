@@ -1,4 +1,5 @@
 -module(diameter_of_binary_tree).
+-export([diameter_of_binary_tree/1]).
 
 -record(tree_node, {val = 0 :: integer(),
                     left = null  :: 'null' | #tree_node{},

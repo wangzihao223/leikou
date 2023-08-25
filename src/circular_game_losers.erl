@@ -1,31 +1,18 @@
-%%%-------------------------------------------------------------------
-%%% @author 16009
-%%% @copyright (C) 2023, <COMPANY>
-%%% @doc
-%%%
-%%% @end
-%%% Created : 17. 8月 2023 9:10
-%%%-------------------------------------------------------------------
 -module(circular_game_losers).
--author("16009").
 
-% 找出转圈游戏输家
-%% API
 -export([circular_game_losers/2]).
 
-
--spec circular_game_losers(N :: integer(), K :: integer()) -> [integer()].
-
 circular_game_losers(N, K) ->
-    S = sets:new(),
-    CountSet = start_game(sets:add_element(0, S), 1, K, 0, N),
-    get_losers(CountSet, N - 1, []).
-
+    % S = sets:new(),
+    % CountSet = start_game(sets:add_element(0, S), 1, K, 0, N),
+    % get_losers(CountSet, N - 1, []).
+    Array = loop(create_array(N), N, 0, 1, K),
+    get_res(Array, N - 1, []).
 
 start_game(CountSet, Round, K, PlayerId, PlayerNum) ->
     % 计算下一个接球的 PlayerId
     NextPlayerId = (K * Round + PlayerId) rem PlayerNum,
-    % io:format("the next player is ~p ~n", [NextPlayerId + 1]),
+    io:format("the next player is ~p ~n", [NextPlayerId + 1]),
     case sets:is_element(NextPlayerId, CountSet) of
         true -> CountSet;
         false ->
@@ -38,3 +25,25 @@ get_losers(CountSet, PlayerNum, Res) when PlayerNum >= 0 ->
         false -> get_losers(CountSet, PlayerNum - 1, [PlayerNum + 1 | Res])
     end;
 get_losers(_CountSet, _PlayerNum, Res) -> Res.
+
+
+create_array(N) ->
+    A = array:new([{size, N}, {default, 0}]),
+    array:set(0, 1, A).
+
+loop(Array, PlayerNum, PlayerId, Round, K) ->
+    NextPlayerId = (K * Round + PlayerId) rem PlayerNum,
+    V = array:get(NextPlayerId, Array),
+    io:format("the next player is ~p ~n", [NextPlayerId + 1]),
+    if V =/= 0 -> Array;
+        true -> loop(array:set(NextPlayerId, V + 1, Array), PlayerNum, NextPlayerId, Round + 1, K)
+    end;
+loop(Array, _, _, _, _) -> Array.
+
+get_res(Array, PlayerNum, Res) when PlayerNum >= 0 ->
+    
+    V = array:get(PlayerNum, Array),
+    if V == 0 -> get_res(Array, PlayerNum - 1, [PlayerNum + 1 | Res]);
+        true -> get_res(Array, PlayerNum - 1, Res) 
+    end;
+get_res(_, _, Res)-> Res.
