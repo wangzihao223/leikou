@@ -5,44 +5,39 @@
 -export([decode_string/1]).
 
 decode_string(S) -> 
-    StringList = deocde_one(S, []),
-    merge_str(StringList, []).
+    list_to_binary(lists:reverse(read_str(S, []))).
 
-merge_str([Str | NextStr], Res) ->
+decode_str(<<C:8, Next/binary>>, Box, Res) when C > 47, C < 58 ->
+    decode_str(Next, [C - 48 | Box], Res);
+decode_str(<<C:8, Next/binary>>, Box, Res) when C == 91 ->
+    Count = to_integer(Box, 0, 1),
+    io:format("Count is ~p ~n", [Count]),
+    {Next1, Res1} = read_str(Next, []),
+    io:format("Res1 is ~p ~n", [Res1]),
+    Res2 = lists:reverse(merge_str(Count, Res1, [], Res1)),
+    io:format("Res2 is ~p ~n", [Res2]),
+    Res3 = merge_list(lists:reverse(Res2), Res),
+    {Res3, Next1}.
 
-    Res1 = merge_str1(Str, Res),
-    merge_str(NextStr, Res1);
-merge_str([], Res) -> list_to_binary(Res).
-   
+merge_str(Count, _, R, _) when Count =< 0 -> R;
+merge_str(Count, [S | Next], R, Source) ->
+    merge_str(Count, Next, [S | R], Source);
+merge_str(Count, [], R, Source) ->
+    io:format("count ~p ~n", [Count]),
+    merge_str(Count - 1, Source, R, Source).
 
-merge_str1([S | Next], Res) ->
-    merge_str1(Next, [S | Res]);
-merge_str1([], Res) -> Res.
+merge_list([N | Next], L2) ->
+    merge_list(Next, [N | L2]);
+merge_list([], L2) -> L2.
 
+read_str(<<C:8, Next/binary>>, Res) when C == 93 -> {Next, Res};
+read_str(<<C:8, Next/binary>>, Res) when C =< 47; C >=58 ->
+    read_str(Next, [C | Res]);
+read_str(<<C:8, Next/binary>>, Res) when C > 47, C < 58 ->
+    {Res1, Str} = decode_str(<<C:8, Next/binary>>, [], Res),
+    read_str(Str, Res1);
+read_str(<<>>, Res) -> Res.
 
-deocde_one(<<Number:8, 91:8, Next/binary>>, Res) when Number > 47, Number < 58 ->
-    {Next1, Stack} = get_str(Next, []),
-    Count = Number - 48,
-    Str = copy_str(Count, Stack, [], Stack),
-    deocde_one(Next1, [Str | Res]);
-deocde_one(<<>>, Res) -> Res;
-deocde_one(Next, Res) ->
-    {Next1, Stack} = read_letter(Next, []),
-    deocde_one(Next1, [Stack | Res]).
-
-read_letter(<<W:8, Next/binary>>, Stack) when W =< 47, W >= 58->
-    read_letter(Next, [W | Stack]);
-% read_letter(<<>>, Stack) -> {<<>>, Stack},
-read_letter(Bin, Stack) -> {Bin, Stack}.
-
-get_str(<<W:8, Next/binary>>, Stack) when W =/= 93->
-    get_str(Next, [W | Stack]);
-get_str(<<_:8, Next/binary>>, Stack) -> {Next, Stack}.
-
-copy_str(Count, [W | Next], Res, Source) when Count > 0->
-   copy_str(Count, Next, [W | Res], Source);
-copy_str(Count, [], Res, Source) when Count > 0 -> 
-    copy_str(Count - 1, Source, Res, Source);
-copy_str(Count, _, Res, _Source) when Count =< 0 ->
-    Res.
-    
+to_integer([N | Next], Res, M) ->
+    to_integer(Next, Res + M * N, M * 10);
+to_integer([], Res, _M) -> Res.
