@@ -11,13 +11,13 @@
 
 % 字符串中的查找和替换
 %% API
--export([]).
-find_replace_string(S, Indices, Sources, Targets) ->
-  ok.
+% -export([]).
+% find_replace_string(S, Indices, Sources, Targets) ->
+%   ok.
 
-find_replace_one(S, Indices, Source, Target) ->
+% find_replace_one(S, Indices, Source, Target) ->
 
-  Source1 = binary:part(S, {Indices, byte_size(Source)}),
-  if Source == Source1 ->
-    Source
+%   Source1 = binary:part(S, {Indices, byte_size(Source)}),
+%   if Source == Source1 ->
+%     Source
 
