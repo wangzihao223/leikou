@@ -31,12 +31,11 @@ merge1([], L2) -> L2.
 
 
 
--spec permute(Nums :: [integer()]) -> [[integer()]].
-permute(Nums) ->
-  perms(Nums).
+% permute(Nums) ->
+%   perms(Nums).
 
-perms([]) -> [[]];
-perms(L) -> 
-    A = [[H | T] || H <- L, T <- perms(L -- [H])],
-    io:format("A is ~p  L ~p    ~n", [A, L]),
-    A.
+% perms([]) -> [[]];
+% perms(L) -> 
+%     A = [[H | T] || H <- L, T <- perms(L -- [H])],
+%     io:format("A is ~p  L ~p    ~n", [A, L]),
+%     A.
