@@ -20,8 +20,6 @@ select([],  _Remain, Row, L, R) ->
         true -> R
     end.
 
-%     R1 = select(S, [], ),
-%     select(Next, R)
 
 merge_list(L1, L2) ->
     if length(L1) > length(L2) -> merge1(L2, L1);
