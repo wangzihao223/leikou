@@ -41,8 +41,7 @@ insert(K, V, Tree) ->
 
 delete_min(nil) -> {empty_error};
 delete_min({K, V, C, nil}) ->
-  {K, V, ccm_ccm(ccm(C, []), nil)}.
-
+  {K, V, ccm(t2l(C, []), [])}.
 
 merge(nil, T2) -> T2;
 merge(T1, nil) -> T1;
@@ -52,13 +51,13 @@ merge({K1, V1, C1, nil}, {K2, V2, C2, nil}) ->
   {K1, V1, {K2, V2, C2, C1}, nil}.
 
 % child_and_child_merge
-ccm({K1, V1, C1, {K2, V2, C2, B}}, R) ->
-  NewTree = merge({K1, V1, C1, nil}, {K2, V2, C2, nil}),
-  ccm(B, [NewTree | R]);
-ccm({K1, V1, C1, nil}, R) -> [{K1, V1, C1, nil} | R];
-ccm(nil, R) -> R.
+ccm([C1, C2 | N], R) ->
+  ccm(N, [merge(C1, C2) | R]);
+ccm([C1], R) ->  ccm([], [C1 | R]);
+ccm([], [C]) -> C;
+ccm([], R) -> ccm(R, []).
 
-% child_and_child_merge result merge
-ccm_ccm([T | NextT], ResultTree) ->
-  ccm_ccm(NextT, merge(T, ResultTree));
-ccm_ccm([], ResultTree) -> ResultTree.
+% tree to list 
+t2l({K1, V1, C1, B}, R) -> t2l(B, [{K1, V1, C1, nil} | R]);
+t2l(nil, R) -> [nil | R].
+
