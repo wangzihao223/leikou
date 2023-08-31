@@ -30,3 +30,37 @@ travelse2([_N | Next]) ->
 travelse2([]) -> ok.
 
 
+
+% main(N) -> 
+%     test(N),
+%     test_array(N).
+
+% test(N) ->
+%     S1 = erlang:system_time(microsecond),
+%     test1(N, lists:seq(1, 10000)),
+%     S2 = erlang:system_time(microsecond),
+%     io:format("list bad ~p ~n", [S2 - S1]).
+
+% test_array(N) ->
+%     S1 = erlang:system_time(microsecond),
+%     test2(N, array:from_list(lists:seq(1, 10000)), 9999),
+%     S2 = erlang:system_time(microsecond),
+%     io:format("array bad ~p ~n", [S2 - S1]).
+
+
+% test1(0, _) ->  ok;
+% test1(N, List) ->
+%     % lists:seq(1, Size)
+%     loop(List),
+%     test1(N - 1, List).
+
+% test2(0, _, _) -> ok;
+% test2(N, Array, I) -> 
+%     search(Array, I),
+%     test2(N - 1, Array, I).
+
+% search(Array, I) ->
+%     array:get(I, Array).
+
+% loop([_L | Next]) -> loop(Next);
+% loop([]) -> ok.
