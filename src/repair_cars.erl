@@ -1,15 +1,11 @@
 -module(repair_cars).
--export([reszie_range/3]).
--export([time_range/2]).
+% 修车最小时间
+-export([main/2]).
 
-% binary_search() 
-
-% 生成时间范围
-time_range(L, H) -> lists:seq(L, H).
-
-%调整范围
-reszie_range(S, L, H) ->
-    [X || X <- S,  X >= L , X =< H].
+main(Ranks, Cars) ->
+    [H | _] = Ranks,
+    High = Cars * Cars * H,
+    binary_search(0, High, High div 2, Cars, Ranks, High).
 
 % 当前时间是否能够做完
 time_is_enough(Count, [Capacity | Next], Time) ->
@@ -18,15 +14,12 @@ time_is_enough(Count, [Capacity | Next], Time) ->
 time_is_enough(Count, [], _) when Count > 0 -> false;
 time_is_enough(_, [], _) -> true.
 
-binary_search(S, _, _, _, _, _) -> S
-binary_search(S, L, H, M, Count, CapacityList) ->
+binary_search(L, H, M, Count, CapacityList, Res) when H >= L ->
     case time_is_enough(Count, CapacityList, M) of
         true -> 
-            NewS = reszie_range(S, L, M),
-            binary_search(NewS, L, M, (L + M) div 2, Count, CapacityList);
+            binary_search(L, M - 1, (L + M - 1) div 2, Count, CapacityList, min(Res, M));
         false ->
-            NewS = reszie_range(S, M, H),
-            binary_search(NewS, M, H, (L + M) div 2, Count, CapacityList)
-    end.
-
+            binary_search(M + 1, H, (H + M + 1) div 2, Count, CapacityList, Res)
+    end;
+binary_search( _, _, _, _, _, Res) -> Res.
 
