@@ -7,6 +7,7 @@
 %%% Created : 15. 8月 2023 13:18
 %%%-------------------------------------------------------------------
 -module(find_replace_string).
+
 -author("16009").
 
 % 字符串中的查找和替换
@@ -20,4 +21,3 @@
 %   Source1 = binary:part(S, {Indices, byte_size(Source)}),
 %   if Source == Source1 ->
 %     Source
-

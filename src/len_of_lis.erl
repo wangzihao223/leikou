@@ -4,11 +4,11 @@
 
 % 最长递增子序列
 %
-% 
-length_of_lis([_]) -> 1;
+%
+length_of_lis([_]) ->
+    1;
 length_of_lis([V | Nums]) ->
     loop([V | Nums], Nums, make_dp(length([V | Nums])), 1).
-
 
 make_dp(Size) ->
     array:new([{size, Size}, {default, 1}]).
@@ -23,16 +23,17 @@ loop(Nums, [N | Next], Dp, I) ->
 loop(_Nums, [], Dp, _I) ->
     io:format("Format ~n"),
     % lists:max(array:to_list(Dp)dd)
-    lists:max(array:to_list(Dp)).
+    lists:max(
+        array:to_list(Dp)).
 
-dp_func(Dp, [N | Next], J, Length, Num, DpI) when Num > N -> 
+dp_func(Dp, [N | Next], J, Length, Num, DpI) when Num > N ->
     N1 = array:get(J, Dp),
     io:format("N1 ~p DpI ~p J ~p ~p num ~p ~n", [N1, DpI, J, Length, Num]),
     dp_func(Dp, Next, J + 1, Length, Num, max(DpI, N1 + 1));
-dp_func(Dp, [_ | Next], J, Length, Num, DpI) -> 
+dp_func(Dp, [_ | Next], J, Length, Num, DpI) ->
     dp_func(Dp, Next, J + 1, Length, Num, DpI);
-dp_func(_Dp, [], _J, _Length, _Num, DpI) -> DpI.
-
+dp_func(_Dp, [], _J, _Length, _Num, DpI) ->
+    DpI.
 
     % def lengthOfLIS(self, nums: List[int]) -> int:
 
@@ -49,4 +50,4 @@ dp_func(_Dp, [], _J, _Length, _Num, DpI) -> DpI.
     %                 dp[i] = max(dp[i], dp[j] + 1)
 
     %     return max(dp)
-    % 
+    %

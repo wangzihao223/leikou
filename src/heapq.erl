@@ -7,6 +7,7 @@
 %%% Created : 25. 7月 2023 10:19
 %%%-------------------------------------------------------------------
 -module(heapq).
+
 -author("wangzihao").
 
 %% API
@@ -14,50 +15,52 @@
 -export([insert/3]).
 -export([delete_min/1]).
 
-
 % type
 
--type p_tree_node(K, V) :: 'nil' |
-  {K, V, p_tree_node(K, V), p_tree_node(K,V)}.
-
+-type p_tree_node(K, V) :: nil | {K, V, p_tree_node(K, V), p_tree_node(K, V)}.
 -type p_tree() :: p_tree_node(_, _).
 
 -spec empty() -> p_tree().
+empty() ->
+    nil.
 
-empty() -> nil.
-
--spec insert(K, V, Tree) -> p_tree() when
-    K :: integer(),
-    V :: any(),
-    Tree :: p_tree().
-
+-spec insert(K, V, Tree) -> p_tree()
+    when K :: integer(),
+         V :: any(),
+         Tree :: p_tree().
 insert(K, V, Tree) ->
-  merge({K, V, nil, nil}, Tree).
+    merge({K, V, nil, nil}, Tree).
 
--spec delete_min(Tree) -> {K, V, p_tree()} when
-  Tree :: p_tree(),
-  K :: integer(),
-  V :: any().
-
-delete_min(nil) -> {empty_error};
+-spec delete_min(Tree) -> {K, V, p_tree()}
+    when Tree :: p_tree(),
+         K :: integer(),
+         V :: any().
+delete_min(nil) ->
+    {empty_error};
 delete_min({K, V, C, nil}) ->
-  {K, V, ccm(t2l(C, []), [])}.
+    {K, V, ccm(t2l(C, []), [])}.
 
-merge(nil, T2) -> T2;
-merge(T1, nil) -> T1;
+merge(nil, T2) ->
+    T2;
+merge(T1, nil) ->
+    T1;
 merge({K1, V1, C1, nil}, {K2, V2, C2, nil}) when K1 > K2 ->
-  {K2, V2, {K1, V1, C1, C2}, nil};
+    {K2, V2, {K1, V1, C1, C2}, nil};
 merge({K1, V1, C1, nil}, {K2, V2, C2, nil}) ->
-  {K1, V1, {K2, V2, C2, C1}, nil}.
+    {K1, V1, {K2, V2, C2, C1}, nil}.
 
 % child_and_child_merge
 ccm([C1, C2 | N], R) ->
-  ccm(N, [merge(C1, C2) | R]);
-ccm([C1], R) ->  ccm([], [C1 | R]);
-ccm([], [C]) -> C;
-ccm([], R) -> ccm(R, []).
+    ccm(N, [merge(C1, C2) | R]);
+ccm([C1], R) ->
+    ccm([], [C1 | R]);
+ccm([], [C]) ->
+    C;
+ccm([], R) ->
+    ccm(R, []).
 
-% tree to list 
-t2l({K1, V1, C1, B}, R) -> t2l(B, [{K1, V1, C1, nil} | R]);
-t2l(nil, R) -> [nil | R].
-
+% tree to list
+t2l({K1, V1, C1, B}, R) ->
+    t2l(B, [{K1, V1, C1, nil} | R]);
+t2l(nil, R) ->
+    [nil | R].

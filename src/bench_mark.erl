@@ -1,11 +1,11 @@
 -module(bench_mark).
 
 -export([test/0]).
+
 make_list(L, R) when L > 0 ->
     make_list(L - 1, [L | R]);
-make_list(0, R) -> R.
-
-
+make_list(0, R) ->
+    R.
 
 test() ->
     % 0 - 1000000
@@ -14,24 +14,24 @@ test() ->
     S1 = erlang:system_time(microsecond),
     travelse2(B),
     S2 = erlang:system_time(microsecond),
-    io:format("list ~p ~n", [S2  - S1]),
+    io:format("list ~p ~n", [S2 - S1]),
     S3 = erlang:system_time(microsecond),
-    traverse1(1000000, A), 
+    traverse1(1000000, A),
     S4 = erlang:system_time(microsecond),
-    io:format("array ~p ~n", [S4  - S3]).
+    io:format("array ~p ~n", [S4 - S3]).
 
-traverse1(L, Array) when L > 0->
+traverse1(L, Array) when L > 0 ->
     array:get(L, Array),
     traverse1(L - 1, Array);
-traverse1(0, _Array)->ok.
+traverse1(0, _Array) ->
+    ok.
 
 travelse2([_N | Next]) ->
     travelse2(Next);
-travelse2([]) -> ok.
+travelse2([]) ->
+    ok.
 
-
-
-% main(N) -> 
+% main(N) ->
 %     test(N),
 %     test_array(N).
 
@@ -47,7 +47,6 @@ travelse2([]) -> ok.
 %     S2 = erlang:system_time(microsecond),
 %     io:format("array bad ~p ~n", [S2 - S1]).
 
-
 % test1(0, _) ->  ok;
 % test1(N, List) ->
 %     % lists:seq(1, Size)
@@ -55,7 +54,7 @@ travelse2([]) -> ok.
 %     test1(N - 1, List).
 
 % test2(0, _, _) -> ok;
-% test2(N, Array, I) -> 
+% test2(N, Array, I) ->
 %     search(Array, I),
 %     test2(N - 1, Array, I).
 

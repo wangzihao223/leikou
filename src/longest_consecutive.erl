@@ -7,10 +7,12 @@
 %%% Created : 02. 8月 2023 17:21
 %%%-------------------------------------------------------------------
 -module(longest_consecutive).
+
 -author("wangzihao").
 
 %% API
 -export([longest_consecutive/1]).
+
 %%-spec longest_consecutive(Nums :: [integer()]) -> integer().
 %%longest_consecutive([]) -> 0;
 %%longest_consecutive(Nums) ->
@@ -38,27 +40,34 @@
 %%map([], Map) -> Map.
 
 -spec longest_consecutive(Nums :: [integer()]) -> integer().
-longest_consecutive([]) -> 0;
+longest_consecutive([]) ->
+    0;
 longest_consecutive(Nums) ->
-  create_process_dict(Nums),
-  L = max_length(Nums, 1),
-  erase(),
-  L.
+    create_process_dict(Nums),
+    L = max_length(Nums, 1),
+    erase(),
+    L.
 
-max_length([], Max) -> Max;
+max_length([], Max) ->
+    Max;
 max_length([N | NextN], Max) ->
-  case get(N + 1) of
-    undefined -> max_length(NextN, max(serial_length(N, 1), Max));
-    1 -> max_length(NextN, Max)
-  end.
+    case get(N + 1) of
+        undefined ->
+            max_length(NextN, max(serial_length(N, 1), Max));
+        1 ->
+            max_length(NextN, Max)
+    end.
 
 serial_length(N, L) ->
-  case get(N - 1) of
-    1 -> serial_length(N - 1,  L + 1);
-    undefined -> L
-  end.
+    case get(N - 1) of
+        1 ->
+            serial_length(N - 1, L + 1);
+        undefined ->
+            L
+    end.
 
 create_process_dict([N | NextN]) ->
-  put(N, 1),
-  create_process_dict(NextN);
-create_process_dict([]) -> ok.
+    put(N, 1),
+    create_process_dict(NextN);
+create_process_dict([]) ->
+    ok.

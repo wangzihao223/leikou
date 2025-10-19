@@ -11,6 +11,7 @@
 %%% Created : 20. 7月 2023 13:27
 %%%-------------------------------------------------------------------
 -module(max_subarray_sum_circular).
+
 -author("wangzhao").
 
 %% API
@@ -18,22 +19,24 @@
 
 -spec max_subarray_sum_circular(Nums :: [integer()]) -> integer().
 max_subarray_sum_circular(Nums) ->
-  [H|_] = Nums,
-  loop(Nums, H, H, 0, 0, 0).
+    [H | _] = Nums,
+    loop(Nums, H, H, 0, 0, 0).
+
 loop([H | Next], Max, Min, Sum, MaxCount, MinCount) ->
-  if MaxCount =< 0 ->
-      Count = H;
-    true ->
-      Count = MaxCount + H
-  end,
-  if MinCount >= 0 ->
-      Count1 = H;
-    true ->
-      Count1 = H + MinCount
-  end,
+    if MaxCount =< 0 ->
+           Count = H;
+       true ->
+           Count = MaxCount + H
+    end,
+    if MinCount >= 0 ->
+           Count1 = H;
+       true ->
+           Count1 = H + MinCount
+    end,
     loop(Next, max(Count, Max), min(Count1, Min), Sum + H, Count, Count1);
 loop([], Max, Min, Sum, _, _) ->
-
-    if Min == Sum -> Max;
-        true -> max(Max, Sum - Min)
+    if Min == Sum ->
+           Max;
+       true ->
+           max(Max, Sum - Min)
     end.
